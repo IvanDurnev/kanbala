@@ -15,7 +15,7 @@
 {% block content %}
     <div class="container-fluid">
         <div class="row">
-            <div class="col-3">
+            <div class="col-4">
                 <div class="jumbotron p-5">
                     <div class="rounded-circle text-center ml-auto mr-auto mb-2" style="background: url({{ url_for('static', filename='images/user.png') }}); height: 100px; width: 100px; background-size: contain;"></div>
                     <p class="text-center font-weight-bolder m-0 size24" >{{ user.username }}</p>
@@ -23,13 +23,26 @@
                     <p class="mb-3 text-center font-weight-light"><em>{{ user.position }}</em></p>
                     <p class="size14"><span class="badge badge-primary badge-pill">{{ users_regulations|length }}</span> создано регламентов</p>
                     <p class="size14"><span class="badge badge-primary badge-pill">{{ 0 }}</span> согласовано регламентов</p>
-                    <p class="size14"><span class="badge badge-primary badge-pill">{{ 0 }}</span> регламентов на согласовании</p>
-                    <div style="background: url({{ url_for('static', filename='images/diagr.jpg') }}); width: 300px; height: 300px; background-size: contain; background-repeat: no-repeat"></div>
-                    <div style="background: url({{ url_for('static', filename='images/diagr_2.jpg') }}); width: 300px; height: 300px; background-size: contain; background-repeat: no-repeat"></div>
-
+                    <p class="size14"><span class="badge badge-primary badge-pill mb-5">{{ 0 }}</span> регламентов на согласовании</p>
+{#                    <div style="background: url({{ url_for('static', filename='images/diagr.jpg') }}); width: 300px; height: 300px; background-size: contain; background-repeat: no-repeat"></div>#}
+{#                    <div style="background: url({{ url_for('static', filename='images/diagr_2.jpg') }}); width: 300px; height: 300px; background-size: contain; background-repeat: no-repeat"></div>#}
+                    <b class="text-center mt-5">Количество регламентов по ведомствам</b>
+                    <div id='apex' style="width: 350px; height: 300px"></div>
+                    <link rel="stylesheet" href="{{ url_for('static', filename='css/apexcharts.css') }}" type="text/css">
+                    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+                    <script>
+                        var chart = new ApexCharts(document.getElementById("apex"), {
+                            chart: {
+                            type: 'pie'
+                            },
+                            series: [44, 55, 13, 33],
+                            labels: ['МЭР', 'МинСтрой', 'МинСоцРазвития', 'МинФин']
+                        });
+                        chart.render()
+                    </script>
                 </div>
             </div>
-            <div class="col-9">
+            <div class="col-8">
                 <form class="container-fluid p-0 mt-1 ml-3" method="post">
                     <div class="row">
                     <input class="form-control col-8" type="text" placeholder="Найти документ">
@@ -88,18 +101,6 @@
     </div>
 
 
-{#<div class="hint">#}
-{#	<a class="hint-triger" href="#">Нажми меня</a>#}
-{#	<div class="hint-popup">#}
-{#		<a class="hint-close" href="#" title="Закрыть"></a>#}
-{#		<h3>Lorem Ipsum</h3>#}
-{#		<p>#}
-{#			Lorem ipsum dolor sit amet, consectetur adipiscing elit.<br>#}
-{#			Curabitur volutpat euismod ipsum. Sed aliquam sit amet<br>#}
-{#			est mattis mattis. Etiam vitae magna vitae dolor tempor porta.#}
-{#		</p>#}
-{#	</div>#}
-{#</div>#}
 
 {% endblock %}
 
