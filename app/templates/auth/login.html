@@ -19,14 +19,13 @@
   <p class="lead">Недавно добавленые регламенты</p>
   <hr class="my-4">
    <ol>
-   Hello
-       {% for regulation in regulations %}
+       {% for regulation in all_regulations %}
            <li>
-           World
-               {{ regulation.short_name }}
+               <a href="#">{{ regulation.short_name }}</a>
            </li>
        {% endfor %}
    </ol>
+
     </div>
     <form class=" jumbotron col-4 form-signin grey-box" action="" method="post">
 
