@@ -18,13 +18,13 @@
   <p class="lead">Недавно добавленые регламенты</p>
   <hr class="my-4">
    <ol>
-       {% for regulation in regulations %}
+       {% for regulation in all_regulations %}
            <li>
-               {{ regulation.short_name }}
+               <a href="#">{{ regulation.short_name }}</a>
            </li>
        {% endfor %}
    </ol>
-  <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+{#  <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>#}
 
     </div>
     <form class=" jumbotron col-4 form-signin grey-box" action="" method="post">

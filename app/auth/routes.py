@@ -2,7 +2,7 @@ from app import db, mail
 from app.auth import bp
 from flask_login import login_user, logout_user, current_user
 from flask import render_template, redirect, url_for, flash, request
-from app.models import User
+from app.models import User, Regulation
 from app.auth.forms import LoginForm, RegistrationForm, ResetPasswordRequestForm, ResetPasswordForm
 from app import Config
 from flask_mail import Message
@@ -17,6 +17,7 @@ def logout():
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
     title = 'Присоединиться'
+    all_regulations = Regulation.query.all()
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
     form = LoginForm()
@@ -28,7 +29,7 @@ def login():
             return redirect(url_for('auth.login'))
         login_user(user, remember=bool(form.remember_me.data))
         return redirect(url_for('main.index'))
-    return render_template('auth/login.html', form=form, title=title)
+    return render_template('auth/login.html', form=form, title=title, all_regulations=all_regulations)
 
 
 @bp.route('/registration', methods=['GET', 'POST'])
