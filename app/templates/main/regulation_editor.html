@@ -3,10 +3,10 @@
 {% block content %}
     <p id="save_notice" hidden style="position: fixed; right: 5px; top:5px">Изменения сохранены</p>
     <div class="container">
-        <div class="row">
+        <div class="row mt-3">
             <div class="col">
-                <p class="m-0">Регламент: {{ regulation_version.parent_regulation().short_name }}
-                    <a class="btn btn-link" data-toggle="collapse" href="#collapseRenameRegulation" role="button" aria-expanded="false" aria-controls="collapseRenameRegulation">
+                <p class="m-0 p-0">Регламент: {{ regulation_version.parent_regulation().short_name }}
+                    <a class="btn btn-link p-0 m-0" data-toggle="collapse" href="#collapseRenameRegulation" role="button" aria-expanded="false" aria-controls="collapseRenameRegulation">
                         Переименовать
                     </a>
                 </p>
@@ -26,6 +26,10 @@
             <div class="col">
                 <p class="m-0">Дата создания {{ regulation_version.created.strftime('%d.%m.%y %H:%M') }}</p>
                 <p>Статус <em>{{ regulation_version.status }}</em></p>
+            </div>
+            <div class="col">
+                <a class="btn btn-outline-info">Сохранить в ПДФ</a>
+                <a class="btn btn-outline-primary">Выгрузить в Реестр <img class="p-0 d-block" style="height: 10px" src="{{ url_for('static', filename='img/gos.svg') }}" /></a>
             </div>
         </div>
             <form class="form-inline text-right m-3" action="" method="post">
