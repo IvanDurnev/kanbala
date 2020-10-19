@@ -15,6 +15,7 @@ class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     regulation_version_id = db.Column(db.Integer, db.ForeignKey('regulation_version.id'))
+    chapter = db.Column(db.String(50))
     paragraph = db.Column(db.String(50))
     created = db.Column(db.DateTime, default=datetime.now())
     text = db.Column(db.String(2048))
@@ -60,7 +61,8 @@ class User(UserMixin, db.Model):
         return User.query.get(id)
 
     def __repr__(self):
-        return f'{self.first_name} {self.last_name}'
+        # return f'{self.first_name} {self.last_name}'
+        return f'{self.username}'
 
 
 class BaseDoc(db.Model):

@@ -86,7 +86,8 @@ def regulation_show(regulation_version_id):
                            applications=RegulationApplication.get_applications_by_doc(regulation_version.parent_regulation().id),
                            rename_regulation_form=rename_regulation_form,
                            add_document_link=add_document_link,
-                           regulation_base_documents=regulation_version.parent_regulation().get_base_documents())
+                           regulation_base_documents=regulation_version.parent_regulation().get_base_documents(),
+                           str=str, type=type, int=int)
 
 
 @bp.route('/add_regulation_application/<id>', methods=['POST'])
@@ -114,16 +115,26 @@ def show_regulation_comment_mode(regulation_version_id):
                            data=data,
                            regulation_base_documents=regulation_version.parent_regulation().get_base_documents(),
                            current_user=current_user,
-                           comments=comments)
+                           comments=comments,
+                           str=str, type=type)
 
 @bp.route('/save_regulation_<regulation_version_id>', methods=['POST'])
 @login_required
 def regulation_save(regulation_version_id):
     data = json.loads(json.dumps(request.form))
     regulation_version: RegulationVersion = RegulationVersion.query.get(regulation_version_id)
-    regulation_version_data = json.loads(regulation_version.data)
+    regulation_version_data = dict()
     for item in data:
-        regulation_version_data[item] = data[item]
+        if item.startswith('chapter'):
+            if item not in regulation_version_data.keys():
+                regulation_version_data[item] = dict()
+            regulation_version_data[item]['title'] = data[item]
+        elif item.startswith('paragraph'):
+            if 'paragraphs' not in regulation_version_data[f'chapter_{item.split("_")[1]}'].keys():
+                regulation_version_data[f'chapter_{item.split("_")[1]}']['paragraphs'] = dict()
+            regulation_version_data[f'chapter_{item.split("_")[1]}']['paragraphs'][int(item.split("_")[2])] = data[item]
+        else:
+            regulation_version_data[item] = data[item]
     regulation_version.data = json.dumps(regulation_version_data)
     # regulation_version.parent_regulation().base_document = data['header_base_doc']
     db.session.commit()
@@ -139,7 +150,7 @@ def editor_add_chapter(regulation_version_id):
     for item in regulation_version_data:
         if re.match('chapter_\d', item):
             chapters_count += 1
-    regulation_version_data[f'chapter_{chapters_count+1}'] = ''
+    regulation_version_data[f'chapter_{chapters_count+1}'] = {'title': '', 'paragraphs': {}}
     regulation_version.data = json.dumps(regulation_version_data)
     db.session.commit()
     return redirect(request.referrer)
@@ -149,12 +160,9 @@ def editor_add_chapter(regulation_version_id):
 def add_paragraph(regulation_version_id, chapter_number):
     regulation_version: RegulationVersion = RegulationVersion.query.get(regulation_version_id)
     regulation_version_data = json.loads(regulation_version.data)
-
-    paragraph_count = 0
-    for item in regulation_version_data:
-        if re.match(f'paragraph_{chapter_number}_\d', item):
-            paragraph_count += 1
-    regulation_version_data[f'paragraph_{chapter_number}_{paragraph_count+1}'] = ''
+    if 'paragraphs' not in regulation_version_data[f'chapter_{chapter_number}'].keys():
+        regulation_version_data[f'chapter_{chapter_number}']['paragraphs'] = dict()
+    regulation_version_data[f'chapter_{chapter_number}']['paragraphs'][len(regulation_version_data[f'chapter_{chapter_number}']['paragraphs'])+1] = ''
     regulation_version.data = json.dumps(regulation_version_data)
     db.session.commit()
     return redirect(request.referrer)
@@ -162,15 +170,13 @@ def add_paragraph(regulation_version_id, chapter_number):
 
 @bp.route('/save_comment_<user_id>_<regulation_version_id>', methods=['POST'])
 def save_comment(user_id, regulation_version_id):
-    data = json.loads(json.dumps(request.form))
-    for item in data:
-        if re.match('comment', item):
-            paragraph = item.split('_')[-1]
-            comment = Comment()
-            comment.user_id = user_id
-            comment.regulation_version_id = regulation_version_id
-            comment.paragraph = paragraph
-            comment.text = data[item]
-            db.session.add(comment)
-            db.session.commit()
+    data = request.form
+    comment = Comment()
+    comment.user_id = user_id
+    comment.regulation_version_id = regulation_version_id
+    comment.chapter = data['chapter']
+    comment.paragraph = data['paragraph']
+    comment.text = data['comment']
+    db.session.add(comment)
+    db.session.commit()
     return redirect(request.referrer)
